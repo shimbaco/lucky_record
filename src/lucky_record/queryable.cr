@@ -66,7 +66,21 @@ module LuckyRecord::Queryable(T)
   # end
 
   def results
-    exec_query
+    records = exec_query
+
+    preload.try do |value|
+      comments = value.call(records.map(&.id))
+
+      records.each do |record|
+        pp record
+        if record.responds_to?(:"_preloaded_comments=")
+          pp "PRELOAD MEEEEE"
+          record._preloaded_comments = comments[record.id]
+        end
+      end
+    end
+
+    records
     # post_ids = posts.map(&.id)
     # query.preload_me
     # comments = Comment::BaseQuery.new.post_id.in(post_ids).results.group_by(&.post_id)
