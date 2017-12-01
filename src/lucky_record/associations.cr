@@ -7,6 +7,9 @@ module LuckyRecord::Associations
 
     class BaseQuery < LuckyRecord::Query
       def preload_{{ assoc_name }}
+        preload do |ids|
+          {{ model }}::BaseQuery.new.post_id.in(ids).results.group_by(&.post_id)
+        end
         self
       end
     end

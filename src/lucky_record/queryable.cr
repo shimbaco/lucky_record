@@ -55,13 +55,24 @@ module LuckyRecord::Queryable(T)
     end
   end
 
+  getter preload : (Array(Int32) -> Hash(Int32, Array(Comment)))?
+
+  def preload(&block : Array(Int32) -> Hash(Int32, Array(Comment)))
+    @preload = block
+  end
+
+  # def preload=(&block : Array(Int32) -> Hash(Int32, Array(LuckyRecord::BaseQuery)))
+  #   @preload = preload
+  # end
+
   def results
-    posts = exec_query
-    post_ids = posts.map(&.id)
-    comments = Comment::BaseQuery.new.post_id.in(post_ids).results.group_by(&.post_id)
-    posts.map do |post|
-      post._preloaded_comments = comments[post.id]
-    end
+    exec_query
+    # post_ids = posts.map(&.id)
+    # query.preload_me
+    # comments = Comment::BaseQuery.new.post_id.in(post_ids).results.group_by(&.post_id)
+    # posts.map do |post|
+    #   post._preloaded_comments = comments[post.id]
+    # end
   end
 
   private def exec_query
