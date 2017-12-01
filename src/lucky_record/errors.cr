@@ -5,6 +5,9 @@ module LuckyRecord
   class LuckyRecordError < Exception
   end
 
+  class LazyLoadError < LuckyRecordError
+  end
+
   # Raised when Lucky Record cannot find a record by given id
   class RecordNotFoundError < LuckyRecordError
     def initialize(@model : Symbol, @id : String)

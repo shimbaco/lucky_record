@@ -3,7 +3,11 @@ module LuckyRecord::Associations
     {% assoc_name = type_declaration.var }
     {% model = type_declaration.type %}
     def {{ assoc_name.id }}
-      {{ model }}::BaseQuery.new.{{ @type.name.underscore }}_id(id)
+      if settings.lazy_load_enabled
+        {{ model }}::BaseQuery.new.{{ @type.name.underscore }}_id(id)
+      else
+        raise LuckyRecord::LazyLoadError.new
+      end
     end
   end
 
