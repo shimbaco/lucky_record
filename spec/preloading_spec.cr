@@ -23,7 +23,7 @@ describe "Preloading" do
 
       posts = Post::BaseQuery.new.preload_comments
 
-      posts.comments.should eq([comment])
+      posts.first.comments.should eq([comment])
     ensure
       lazy_load(enabled: true)
     end

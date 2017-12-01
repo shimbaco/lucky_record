@@ -2,11 +2,19 @@ module LuckyRecord::Associations
   macro has_many(type_declaration)
     {% assoc_name = type_declaration.var }
     {% model = type_declaration.type %}
+    @_preloaded_{{ assoc_name }} : Array({{ model }})?
+
+    class BaseQuery < LuckyRecord::Query
+      def preload_{{ assoc_name }}
+        self
+      end
+    end
+
     def {{ assoc_name.id }}
       if settings.lazy_load_enabled
         {{ model }}::BaseQuery.new.{{ @type.name.underscore }}_id(id)
       else
-        raise LuckyRecord::LazyLoadError.new
+        @_preloaded_{{ assoc_name }} || raise LuckyRecord::LazyLoadError.new
       end
     end
   end
