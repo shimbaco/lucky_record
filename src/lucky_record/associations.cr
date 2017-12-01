@@ -3,6 +3,7 @@ module LuckyRecord::Associations
     {% assoc_name = type_declaration.var }
     {% model = type_declaration.type %}
     @_preloaded_{{ assoc_name }} : Array({{ model }})?
+    setter _preloaded_{{ assoc_name }}
 
     class BaseQuery < LuckyRecord::Query
       def preload_{{ assoc_name }}

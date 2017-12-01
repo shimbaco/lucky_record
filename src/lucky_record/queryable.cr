@@ -41,7 +41,7 @@ module LuckyRecord::Queryable(T)
 
   def first
     query.limit(1)
-    exec_query.first
+    results.first
   end
 
   def count : Int64
@@ -56,7 +56,12 @@ module LuckyRecord::Queryable(T)
   end
 
   def results
-    exec_query
+    posts = exec_query
+    post_ids = posts.map(&.id)
+    comments = Comment::BaseQuery.new.post_id.in(post_ids).results.group_by(&.post_id)
+    posts.map do |post|
+      post._preloaded_comments = comments[post.id]
+    end
   end
 
   private def exec_query
