@@ -72,9 +72,7 @@ module LuckyRecord::Queryable(T)
       comments = value.call(records.map(&.id))
 
       records.each do |record|
-        pp record
         if record.responds_to?(:"_preloaded_comments=")
-          pp "PRELOAD MEEEEE"
           record._preloaded_comments = comments[record.id]
         end
       end

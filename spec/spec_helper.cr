@@ -15,6 +15,8 @@ end
 
 Spec.after_each do
   UserQuery.new.destroy_all
+  Post::BaseQuery.new.destroy_all
+  Comment::BaseQuery.new.destroy_all
 end
 
 private class UserForm < User::BaseForm
