@@ -38,6 +38,16 @@ describe "Preloading" do
   end
 
   it "works with nested preloads" do
+    with_lazy_load(enabled: false) do
+      post = PostBox.save
+      comment = CommentBox.new.post_id(post.id).save!
+
+      posts = Post::BaseQuery.new.preload_comments(
+        Comment::BaseQuery.new.preload_post
+      )
+
+      posts.first.comments.first.post.should eq(post)
+    end
   end
 
   it "uses an empty array if there are no associated records" do
