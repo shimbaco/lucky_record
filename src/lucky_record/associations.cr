@@ -2,6 +2,7 @@ module LuckyRecord::Associations
   macro has_many(type_declaration)
     {% assoc_name = type_declaration.var }
     {% model = type_declaration.type %}
+    {% foreign_key = "#{@type.name.underscore}_id".id %}
     @_preloaded_{{ assoc_name }} : Array({{ model }})?
     setter _preloaded_{{ assoc_name }}
 
@@ -9,7 +10,7 @@ module LuckyRecord::Associations
       def preload_{{ assoc_name }}
         add_preload do |records|
           ids = records.map(&.id)
-          {{ assoc_name }} = {{ model }}::BaseQuery.new.post_id.in(ids).results.group_by(&.post_id)
+          {{ assoc_name }} = {{ model }}::BaseQuery.new.{{ foreign_key }}.in(ids).results.group_by(&.{{ foreign_key }})
           records.each do |record|
             record._preloaded_{{ assoc_name }} = {{ assoc_name }}[record.id]
           end
@@ -20,7 +21,7 @@ module LuckyRecord::Associations
 
     def {{ assoc_name.id }}
       if settings.lazy_load_enabled
-        {{ model }}::BaseQuery.new.{{ @type.name.underscore }}_id(id)
+        {{ model }}::BaseQuery.new.{{ foreign_key }}(id)
       else
         @_preloaded_{{ assoc_name }} || raise LuckyRecord::LazyLoadError.new
       end
