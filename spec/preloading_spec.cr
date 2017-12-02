@@ -51,6 +51,17 @@ describe "Preloading" do
   end
 
   it "preloads belongs_to" do
+    with_lazy_load(enabled: false) do
+      post = PostBox.save
+      comment = CommentBox.new.post_id(post.id).save!
+
+      comments = Comment::BaseQuery.new.preload_post
+
+      comments.first.post.should eq(post)
+    end
+  end
+
+  it "preloads optional belongs_to" do
   end
 end
 
