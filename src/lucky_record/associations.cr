@@ -7,10 +7,10 @@ module LuckyRecord::Associations
     setter _preloaded_{{ assoc_name }}
 
     class BaseQuery < LuckyRecord::Query
-      def preload_{{ assoc_name }}
+      def preload_{{ assoc_name }}(preload_query : {{ model }}::BaseQuery = {{ model}}::BaseQuery.new)
         add_preload do |records|
           ids = records.map(&.id)
-          {{ assoc_name }} = {{ model }}::BaseQuery.new.{{ foreign_key }}.in(ids).results.group_by(&.{{ foreign_key }})
+          {{ assoc_name }} = preload_query.{{ foreign_key }}.in(ids).results.group_by(&.{{ foreign_key }})
           records.each do |record|
             record._preloaded_{{ assoc_name }} = {{ assoc_name }}[record.id]? || [] of {{ model }}
           end

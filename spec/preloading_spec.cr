@@ -24,6 +24,19 @@ describe "Preloading" do
     end
   end
 
+  it "preloads has_many with custom query" do
+    with_lazy_load(enabled: false) do
+      post = PostBox.save
+      comment = CommentBox.new.post_id(post.id).save!
+
+      posts = Post::BaseQuery.new.preload_comments(
+        Comment::BaseQuery.new.id.not(comment.id)
+      )
+
+      posts.results.first.comments.should eq([] of Comment)
+    end
+  end
+
   it "works with nested preloads" do
   end
 
@@ -33,7 +46,7 @@ describe "Preloading" do
 
       posts = Post::BaseQuery.new.preload_comments
 
-      posts.results.first.comments.should eq [] of Comment
+      posts.results.first.comments.should eq([] of Comment)
     end
   end
 
