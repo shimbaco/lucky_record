@@ -3,6 +3,8 @@ require "./spec_helper"
 describe "Preloading" do
   it "can disable lazy loading" do
     with_lazy_load(enabled: false) do
+      post = PostBox.save
+
       posts = Post::BaseQuery.new
 
       expect_raises LuckyRecord::LazyLoadError do
