@@ -12,7 +12,7 @@ module LuckyRecord::Associations
           ids = records.map(&.id)
           {{ assoc_name }} = {{ model }}::BaseQuery.new.{{ foreign_key }}.in(ids).results.group_by(&.{{ foreign_key }})
           records.each do |record|
-            record._preloaded_{{ assoc_name }} = {{ assoc_name }}[record.id]
+            record._preloaded_{{ assoc_name }} = {{ assoc_name }}[record.id]? || [] of {{ model }}
           end
         end
         self

@@ -13,7 +13,7 @@ describe "Preloading" do
     end
   end
 
-  it "preloads_queries" do
+  it "preloads has_many" do
     with_lazy_load(enabled: false) do
       post = PostBox.save
       comment = CommentBox.new.post_id(post.id).save!
@@ -28,9 +28,16 @@ describe "Preloading" do
   end
 
   it "uses an empty array if there are no associated records" do
+    with_lazy_load(enabled: false) do
+      post = PostBox.save
+
+      posts = Post::BaseQuery.new.preload_comments
+
+      posts.results.first.comments.should eq [] of Comment
+    end
   end
 
-  it "works with belongs_to" do
+  it "preloads belongs_to" do
   end
 end
 
